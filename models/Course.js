@@ -5,14 +5,9 @@ const CourseSchema = new mongoose.Schema({
     numero_partecipanti: { type: Number, required: true },
     programma_corso: [
         {
-            modulo: { type: String, required: true }, // Nome del modulo
-            lezioni: [
-                {
-                    titolo: { type: String, required: true }, // Titolo della lezione
-                    descrizione: { type: String }, // Descrizione opzionale
-                    durata: { type: Number }, // Durata in minuti
-                },
-            ],
+            modulo: { type: String, required: true },
+            descrizione: { type: String, required: true }, 
+            durata: { type: Number, required: true},
         },
     ],
     indirizzo_di_svolgimento: { type: String, required: true, maxlength: 40,},
