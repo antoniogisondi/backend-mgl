@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 
 const CourseSchema = new mongoose.Schema({
     nome_corso: { type: String, required: true, maxlength: 255 },
-    numero_partecipanti: { type: Number, required: true },
     programma_corso: [
         {
             modulo: { type: String, required: true },
