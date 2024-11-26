@@ -77,3 +77,28 @@ exports.getCourseDetails = async (req,res) => {
         res.status(500).json({ message: 'Errore del server' });
     }
 }
+
+
+exports.UpdateCourse = async (req,res) => {
+    console.log('UpdateCourse chiamato');
+    console.log('ID Corso:', req.params.id);
+    console.log('Dati ricevuti:', req.body);
+    const courseId = req.params.id
+    const update = req.body
+
+    try {
+        const updatedCourse = await Course.findByIdAndUpdate(courseId, update, {
+            new: true,
+            runValidators: true
+        })
+
+        if (!updatedCourse) {
+            return res.status(400).json({ message:'Corso non trovato'})
+        }
+
+        res.status(200).json({course: updatedCourse})
+    } catch (error) {
+        console.error('Errore durante la modifica del corso:', error);
+        res.status(500).json({ message: 'Errore del server' });
+    }
+}
