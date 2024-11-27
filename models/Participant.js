@@ -10,7 +10,7 @@ const ParticipantSchema = new mongoose.Schema({
     mansione: { type: String },
     azienda: { type: String },
     partita_iva_azienda: { type: String },
-    corso: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
+    courseId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course', required:true }],
 })
 
 module.exports = mongoose.model('Participant', ParticipantSchema)

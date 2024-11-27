@@ -23,6 +23,7 @@ const CourseSchema = new mongoose.Schema({
             durata_ore: { type: Number, required: true }, // Durata in ore per quel giorno
         },
     ],
+    partecipanti: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Participant'}]
 })
 
 CourseSchema.pre('save', function (next) {

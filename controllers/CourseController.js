@@ -36,7 +36,7 @@ exports.createCourse = async (req,res) => {
 
         const participantsWithCourse = partecipanti.map((p) => ({
             ...p,
-            corso: newCourse._id
+            courseId: newCourse._id
         }))
 
         const savedParticipants = await Participant.insertMany(participantsWithCourse)
@@ -105,14 +105,15 @@ exports.UpdateCourse = async (req,res) => {
 
 
 exports.DeleteCourse = async (req,res) => {
-
     try {
         const {id} = req.params
-        const deletedCourse = Course.findByIdAndDelete(id)
+        const deletedCourse = await Course.findByIdAndDelete(id)
     
         if (!deletedCourse) {
             return res.status(404).json({ message: 'Corso non trovato' });
         }
+
+        const deletedParticipants = await Participant.deleteMany({courseId: id})
     
         res.status(200).json({ message: 'Corso eliminato con successo' });
     } catch (error) {
