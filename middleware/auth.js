@@ -13,7 +13,6 @@ const protect = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded; // Imposta i dati dell'utente decodificati
-        console.log('Utente autenticato:', req.user); // Log per il debug
         next();
     } catch (error) {
         console.error('Errore di autenticazione:', error);

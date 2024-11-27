@@ -102,3 +102,21 @@ exports.UpdateCourse = async (req,res) => {
         res.status(500).json({ message: 'Errore del server' });
     }
 }
+
+
+exports.DeleteCourse = async (req,res) => {
+
+    try {
+        const {id} = req.params
+        const deletedCourse = Course.findByIdAndDelete(id)
+    
+        if (!deletedCourse) {
+            return res.status(404).json({ message: 'Corso non trovato' });
+        }
+    
+        res.status(200).json({ message: 'Corso eliminato con successo' });
+    } catch (error) {
+        console.error('Errore durante l\'eliminazione del corso:', error);
+        res.status(500).json({ message: 'Errore del server' });
+    }
+}
