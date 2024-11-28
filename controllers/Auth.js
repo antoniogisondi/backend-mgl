@@ -1,5 +1,6 @@
 const User = require('../models/User')
 const jwt = require ('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 
 const generateToken = (id) =>{
     return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: '1h'})
@@ -29,10 +30,12 @@ exports.login = async (req,res) => {
             return res.status(401).json({message:'Utente non trovato'})
         }
 
-        const isMatch = user.matchPassword(password)
-        if (!isMatch) {
-            return res.status(401).json({message:'Password non corretta'})
+        const comparePw = await bcrypt.compare(password, user.password)
+
+        if (!comparePw) {
+            res.status(401).json({message: 'Credenziali non valide'})
         }
+
         const token = generateToken(user._id)
         res.json({token, username: user.username})
     } catch (error) {
