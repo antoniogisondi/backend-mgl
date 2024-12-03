@@ -19,13 +19,16 @@ const CourseSchema = new mongoose.Schema({
     numero_autorizzazione: { type: String, unique: true },
     durata_corso: [
         {
-            giorno: { type: Date, required: true, get: (v) => v.toLocaleDateString('it-IT') }, // Giorno specifico
+            giorno: { type: Date, required: true }, // Giorno specifico
             durata_ore: { type: Number, required: true }, // Durata in ore per quel giorno
         },
     ],
     partecipanti: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Participant'}],
-    data_richiesta: {type: Date, default: Date.now, get: (v) => v.toLocaleDateString('it-IT')}
+    data_richiesta: {type: Date, default: Date.now,  get: (v) => v.toISOString().split('T')[0]}
 })
+
+CourseSchema.set('toJSON', {getters:true})
+CourseSchema.set('toObject', {getters:true})
 
 CourseSchema.pre('save', function (next) {
     if(!this.numero_autorizzazione){
@@ -35,8 +38,5 @@ CourseSchema.pre('save', function (next) {
     }
     next();
 })
-
-CourseSchema.set('toJSON', {getters:true})
-CourseSchema.set('toObject', {getters:true})
 
 module.exports = mongoose.model('Course', CourseSchema)

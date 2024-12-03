@@ -18,6 +18,31 @@ exports.createCourse = async (req,res) => {
     } = req.body
 
     try {
+
+        if (!Array.isArray(durata_corso) || durata_corso.length === 0) {
+            return res.status(400).json({ message: 'L\'array della durata del corso non può essere vuoto.' });
+        }
+
+        const today = new Date().setHours(0, 0, 0, 0);
+
+        // Validazione: Tutte le date devono essere future
+        const invalidDates = durata_corso.filter((day) => {
+            const selectedDate = new Date(day.giorno);
+            if (isNaN(selectedDate)) {
+                console.error(`Data non valida: ${day.giorno}`);
+                return true; // Considera non valida
+            }
+            const normalizedDate = selectedDate.setHours(0, 0, 0, 0);
+            return normalizedDate <= today; // Ritorna true se la data è oggi o precedente
+        });
+
+        if (invalidDates.length > 0) {
+            return res.status(400).json({
+                message: 'Le date inserite nella durata del corso devono essere future.',
+                invalidDates,
+            });
+        }
+
         const newCourse = new Course({
             nome_corso,
             programma_corso, 
@@ -101,19 +126,49 @@ exports.getCourseDetails = async (req,res) => {
 }
 
 
-exports.UpdateCourse = async (req,res) => {
-    const courseId = req.params.id
-    const {partecipanti, ...courseData} = req.body
-    const update = req.body
+exports.UpdateCourse = async (req, res) => {
+    const courseId = req.params.id;
+    const { durata_corso, partecipanti, ...courseData } = req.body;
+
+    console.log('Richiesta ricevuta:', req.body);
 
     try {
+        // Validazione delle date di durata_corso
+        if (Array.isArray(durata_corso) && durata_corso.length > 0) {
+            durata_corso.forEach((entry) => {
+                entry.giorno = new Date(entry.giorno); // Converte in oggetto Date
+                if (isNaN(entry.giorno.getTime())) {
+                    throw new Error(`Data non valida: ${entry.giorno}`);
+                }
+            });
+
+            const today = new Date().setHours(0, 0, 0, 0);
+
+            const invalidDates = durata_corso.filter((day) => {
+                const selectedDate = new Date(day.giorno).setHours(0, 0, 0, 0);
+                return selectedDate <= today;
+            });
+
+            if (invalidDates.length > 0) {
+                return res.status(400).json({
+                    message: 'Le date inserite nella durata del corso devono essere maggiori della data odierna.',
+                });
+            }
+        }
+
+        // Elaborazione dei partecipanti
         const processedParticipants = await Promise.all(
             partecipanti.map(async (participant) => {
                 if (participant._id) {
-                    await Participant.findByIdAndUpdate(participant._id, {$addToSet: {courseId: courseId}}, {new:true, runValidators:true})
+                    // Aggiungi l'ID corso al partecipante esistente
+                    await Participant.findByIdAndUpdate(
+                        participant._id,
+                        { $addToSet: { courseId: courseId } },
+                        { new: true, runValidators: true }
+                    );
                     return participant._id;
                 } else {
-                    // Se il partecipante è nuovo, salvalo e restituisci il nuovo ID
+                    // Crea un nuovo partecipante
                     const newParticipant = new Participant(participant);
                     const savedParticipant = await newParticipant.save();
                     return savedParticipant._id;
@@ -124,7 +179,7 @@ exports.UpdateCourse = async (req,res) => {
         // Aggiorna il corso
         const updatedCourse = await Course.findByIdAndUpdate(
             courseId,
-            { ...courseData, partecipanti: processedParticipants },
+            { ...courseData, partecipanti: processedParticipants, durata_corso },
             { new: true, runValidators: true }
         );
 
@@ -132,12 +187,17 @@ exports.UpdateCourse = async (req,res) => {
             return res.status(404).json({ message: 'Corso non trovato' });
         }
 
+        // Recupera il corso aggiornato per assicurarsi che sia corretto
+        const course = await Course.findById(updatedCourse._id);
+        console.log('Durata corso aggiornata:', course.durata_corso);
+
         res.status(200).json({ course: updatedCourse });
     } catch (error) {
         console.error('Errore durante la modifica del corso:', error);
         res.status(500).json({ message: 'Errore del server' });
     }
-}
+};
+
 
 
 exports.DeleteCourse = async (req,res) => {

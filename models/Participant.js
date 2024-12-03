@@ -5,7 +5,7 @@ const ParticipantSchema = new mongoose.Schema({
     cognome: { type: String, required: true },
     codice_fiscale: {type: String, required: true, unique: true, validate: {validator: function (v){return /^[A-Z0-9]{16}$/i.test(v)}}, message: (props) => `Il codice fiscale non è valido`},
     email: { type: String },
-    data_nascita: { type: Date, required: true, get: (v) => v.toLocaleDateString('it-IT') },
+    data_nascita: { type: Date, required: true,  get: (v) => v.toLocaleDateString('it-IT')},
     comune_nascita: { type: String, required: true },
     provincia_comune_nascita: { type: String, required: true },
     mansione: { type: String },
