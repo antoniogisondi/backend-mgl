@@ -14,7 +14,7 @@ exports.createCourse = async (req,res) => {
         categoria_corso,
         numero_autorizzazione,
         durata_corso,
-        partecipanti
+        partecipanti,
     } = req.body
 
     try {
@@ -29,7 +29,8 @@ exports.createCourse = async (req,res) => {
             docente_corso,
             categoria_corso,
             numero_autorizzazione,
-            durata_corso
+            durata_corso,
+            data_richiesta: new Date(),
         })
 
         await newCourse.save()
@@ -109,7 +110,7 @@ exports.UpdateCourse = async (req,res) => {
         const processedParticipants = await Promise.all(
             partecipanti.map(async (participant) => {
                 if (participant._id) {
-                    // Se il partecipante ha già un ID, restituisci l'ID
+                    await Participant.findByIdAndUpdate(participant._id, {$addToSet: {courseId: courseId}}, {new:true, runValidators:true})
                     return participant._id;
                 } else {
                     // Se il partecipante è nuovo, salvalo e restituisci il nuovo ID
