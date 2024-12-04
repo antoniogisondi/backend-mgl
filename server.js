@@ -13,11 +13,13 @@ app.use(methodOverride('_method'));
 app.use(cors())
 app.use(bodyParser.json())
 
+// Importazione delle rotte
 const authRoutes = require('./routes/auth')
 const courseRoutes = require('./routes/courses')
 const participantsRoutes = require('./routes/participants')
 const private = require('./routes/private')
 
+// Montaggio delle rotte
 app.use('/api', private)
 app.use('/api/auth', authRoutes)
 app.use('/api/courses', courseRoutes)

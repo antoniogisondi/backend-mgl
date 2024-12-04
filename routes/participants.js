@@ -1,10 +1,5 @@
 const express = require('express');
-const {
-    getAllParticipants,
-    getParticipantsById,
-    updateParticipant,
-    deleteParticipant
-} = require('../controllers/ParticipantsController');
+const { getAllParticipants, getParticipantsById, updateParticipant, deleteParticipant } = require('../controllers/ParticipantsController');
 const router = express.Router();
 const protect = require('../middleware/auth');
 

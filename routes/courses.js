@@ -1,11 +1,5 @@
 const express = require('express');
-const {
-    createCourse,
-    getAllCourses,
-    getCourseDetails,
-    UpdateCourse,
-    DeleteCourse
-} = require('../controllers/CourseController');
+const { createCourse, getAllCourses, getCourseDetails, UpdateCourse, DeleteCourse } = require('../controllers/CourseController');
 const router = express.Router();
 const protect = require('../middleware/auth');
 

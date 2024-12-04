@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+// Imposto lo schema del Model dei corsi
 const CourseSchema = new mongoose.Schema({
     nome_corso: { type: String, required: true, maxlength: 255 },
     programma_corso: [
@@ -30,6 +31,7 @@ const CourseSchema = new mongoose.Schema({
 CourseSchema.set('toJSON', {getters:true})
 CourseSchema.set('toObject', {getters:true})
 
+// Funzione che consente di creare il numero di autorizzazione del corso al momento della sua creazione
 CourseSchema.pre('save', function (next) {
     if(!this.numero_autorizzazione){
         const prefix = 'MGL'

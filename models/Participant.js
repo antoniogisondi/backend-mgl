@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+// Imposto lo chema del model dei partecipanti
 const ParticipantSchema = new mongoose.Schema({
     nome: { type: String, required: true },
     cognome: { type: String, required: true },

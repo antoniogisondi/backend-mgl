@@ -1,6 +1,7 @@
 const Course = require('../models/Course');
 const Participant = require('../models/Participant')
 
+// Recupero tutti i partecipanti
 exports.getAllParticipants = async (req, res) => {
     try {
         const selectParticipants = await Participant.find()
@@ -16,6 +17,7 @@ exports.getAllParticipants = async (req, res) => {
     }
 };
 
+// Pagina di dettaglio del partecipante
 exports.getParticipantsById = async (req,res) => {
     try {
         const participantId = req.params.id
@@ -32,6 +34,7 @@ exports.getParticipantsById = async (req,res) => {
     }
 }
 
+// Modifica del partecipante
 exports.updateParticipant = async (req,res) => {
     try {
         const participantId = req.params.id
@@ -48,6 +51,7 @@ exports.updateParticipant = async (req,res) => {
     }
 }
 
+// Eliminazione del partecipante
 exports.deleteParticipant = async (req,res) => {
     try {
         const participantId = req.params.id

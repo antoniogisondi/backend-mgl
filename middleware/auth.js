@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+// Middleware di protezione per le rotte che richiedono autenticazione
 const protect = (req, res, next) => {
     const authHeader = req.headers.authorization;
 

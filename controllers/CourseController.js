@@ -1,6 +1,7 @@
 const Course = require('../models/Course')
 const Participant = require('../models/Participant')
 
+// Funzione per la creazione del corso
 exports.createCourse = async (req,res) => {
     const { 
         nome_corso, 
@@ -25,15 +26,14 @@ exports.createCourse = async (req,res) => {
 
         const today = new Date().setHours(0, 0, 0, 0);
 
-        // Validazione: Tutte le date devono essere future
         const invalidDates = durata_corso.filter((day) => {
             const selectedDate = new Date(day.giorno);
             if (isNaN(selectedDate)) {
                 console.error(`Data non valida: ${day.giorno}`);
-                return true; // Considera non valida
+                return true; 
             }
             const normalizedDate = selectedDate.setHours(0, 0, 0, 0);
-            return normalizedDate <= today; // Ritorna true se la data è oggi o precedente
+            return normalizedDate <= today; 
         });
 
         if (invalidDates.length > 0) {
@@ -95,6 +95,7 @@ exports.createCourse = async (req,res) => {
     }
 }
 
+// Funzione per il recupero di tutti i corsi
 exports.getAllCourses = async (req, res) => {
     try {
         const courses = await Course.find().select('_id nome_corso numero_autorizzazione categoria_corso');
@@ -105,6 +106,7 @@ exports.getAllCourses = async (req, res) => {
     }
 };
 
+// Funzione per la pagina di dettaglio dei corsi
 exports.getCourseDetails = async (req,res) => {
     try {
         const courseId = req.params.id;
@@ -125,12 +127,10 @@ exports.getCourseDetails = async (req,res) => {
     }
 }
 
-
+// Funzione per la modifica dei corsi
 exports.UpdateCourse = async (req, res) => {
     const courseId = req.params.id;
     const { durata_corso, partecipanti, ...courseData } = req.body;
-
-    console.log('Richiesta ricevuta:', req.body);
 
     try {
         // Validazione delle date di durata_corso
@@ -156,11 +156,9 @@ exports.UpdateCourse = async (req, res) => {
             }
         }
 
-        // Elaborazione dei partecipanti
         const processedParticipants = await Promise.all(
             partecipanti.map(async (participant) => {
                 if (participant._id) {
-                    // Aggiungi l'ID corso al partecipante esistente
                     await Participant.findByIdAndUpdate(
                         participant._id,
                         { $addToSet: { courseId: courseId } },
@@ -168,7 +166,6 @@ exports.UpdateCourse = async (req, res) => {
                     );
                     return participant._id;
                 } else {
-                    // Crea un nuovo partecipante
                     const newParticipant = new Participant(participant);
                     const savedParticipant = await newParticipant.save();
                     return savedParticipant._id;
@@ -176,7 +173,6 @@ exports.UpdateCourse = async (req, res) => {
             })
         );
 
-        // Aggiorna il corso
         const updatedCourse = await Course.findByIdAndUpdate(
             courseId,
             { ...courseData, partecipanti: processedParticipants, durata_corso },
@@ -187,10 +183,7 @@ exports.UpdateCourse = async (req, res) => {
             return res.status(404).json({ message: 'Corso non trovato' });
         }
 
-        // Recupera il corso aggiornato per assicurarsi che sia corretto
         const course = await Course.findById(updatedCourse._id);
-        console.log('Durata corso aggiornata:', course.durata_corso);
-
         res.status(200).json({ course: updatedCourse });
     } catch (error) {
         console.error('Errore durante la modifica del corso:', error);
@@ -198,24 +191,22 @@ exports.UpdateCourse = async (req, res) => {
     }
 };
 
-
-
+// Funzione per l'eliminazione del corso
 exports.DeleteCourse = async (req,res) => {
-    const {id} = req.params
+    const courseId = req.params.id
     try {
-        const course = await Course.findById(id);
-        const deletedCourse = await Course.findByIdAndDelete(id)
+        const course = await Course.findById(courseId);
     
         if (!course) {
             return res.status(404).json({ message: 'Corso non trovato' });
         }
 
-        await Course.findByIdAndDelete(id)
-
         await Participant.updateMany(
-            {courseId: id},
-            {$unset: {courseId: ''}}
+            {courseId: courseId},
+            {$pull: {courseId: courseId}}
         )
+
+        await Course.findByIdAndDelete(courseId)
     
         res.status(200).json({ message: 'Corso eliminato con successo' });
     } catch (error) {

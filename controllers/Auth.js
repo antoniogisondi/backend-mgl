@@ -2,10 +2,12 @@ const User = require('../models/User')
 const jwt = require ('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
+// generazione del token JWT
 const generateToken = (id) =>{
     return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: '1h'})
 }
 
+// Funzione per la registrazione
 exports.register = async (req, res) =>{
     const {name, surname, username, password} = req.body
 
@@ -22,6 +24,7 @@ exports.register = async (req, res) =>{
     }
 }
 
+// Funzione per il login
 exports.login = async (req,res) => {
     const {username, password} = req.body
     try {
