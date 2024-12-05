@@ -25,7 +25,8 @@ const CourseSchema = new mongoose.Schema({
         },
     ],
     partecipanti: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Participant'}],
-    data_richiesta: {type: Date, default: Date.now,  get: (v) => v.toISOString().split('T')[0]}
+    data_richiesta: {type: Date, default: Date.now,  get: (v) => v.toISOString().split('T')[0]},
+    status: { type: String, enum: ['Richiesto', 'Attivo', 'Completato'], default: 'Richiesto' },
 })
 
 CourseSchema.set('toJSON', {getters:true})

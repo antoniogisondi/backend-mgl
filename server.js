@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db')
 const port = process.env.PORT || 5000
 dotenv.config()
+require('./utils/cron-jobs')
 
 const app = express()
 app.use(express.json());
