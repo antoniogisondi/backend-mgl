@@ -98,7 +98,7 @@ exports.createCourse = async (req,res) => {
 // Funzione per il recupero di tutti i corsi
 exports.getAllCourses = async (req, res) => {
     try {
-        const courses = await Course.find().select('_id nome_corso numero_autorizzazione categoria_corso');
+        const courses = await Course.find().select('_id nome_corso numero_autorizzazione categoria_corso indirizzo_di_svolgimento cap_sede_corso città_di_svolgimento provincia durata_corso');
         res.status(200).json(courses);
     } catch (error) {
         console.error('Errore durante il recupero dei corsi:', error);
