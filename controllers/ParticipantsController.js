@@ -1,5 +1,7 @@
 const Course = require('../models/Course');
 const Participant = require('../models/Participant')
+const {generateCertificate} = require('../utils/certificateGenerator')
+const path = require('path')
 
 // Recupero tutti i partecipanti
 exports.getAllParticipants = async (req, res) => {
@@ -71,5 +73,36 @@ exports.deleteParticipant = async (req,res) => {
     } catch (error) {
         console.error('Errore durante l\'eliminazione del partecipante:', error);
         res.status(500).json({ message: 'Errore del server' });
+    }
+}
+
+exports.generateCourseCertificate = async (req,res) => {
+    const { participantId, courseId } = req.body;
+
+    try {
+        // Verifica che il partecipante esiste
+        const participant = await Participant.findById(participantId);
+        if (!participant) {
+            console.log('partecipante non trovato nel db')
+            return res.status(404).json({ message: 'Partecipante non trovato' });
+        }
+
+        // Verifica che il corso esiste
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ message: 'Corso non trovato' });
+        }
+
+        // Verifica che il corso sia completato
+        if (course.status !== 'Completato') {
+            return res.status(400).json({ message: 'Il corso non è ancora completato.' });
+        }
+
+        const certificate = await generateCertificate(participant, course)
+        res.setHeader('Content-Disposition', `attachment; filename="certificato-${participantId}.pdf"`);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.sendFile(path.resolve(certificatePath));
+    } catch (error) {
+        console.error(error)
     }
 }
