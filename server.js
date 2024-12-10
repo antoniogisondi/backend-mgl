@@ -18,6 +18,7 @@ app.use(bodyParser.json())
 const authRoutes = require('./routes/auth')
 const courseRoutes = require('./routes/courses')
 const participantsRoutes = require('./routes/participants')
+const paymentRoutes = require('./routes/payments')
 const private = require('./routes/private')
 
 // Montaggio delle rotte
@@ -25,6 +26,7 @@ app.use('/api', private)
 app.use('/api/auth', authRoutes)
 app.use('/api/courses', courseRoutes)
 app.use('/api/participants', participantsRoutes)
+// app.use('/api/payments', paymentRoutes)
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 connectDB()

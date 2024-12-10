@@ -99,13 +99,6 @@ exports.generateCourseCertificate = async (req,res) => {
             return res.status(400).json({ message: 'Il corso non è ancora completato.' });
         }
 
-         // Percorso per salvare il certificato
-        
-
-        // if (!fs.existsSync(certificatesDir)) {
-        //     fs.mkdirSync(certificatesDir, { recursive: true });
-        // }
-
         const pdfbuffer = await generateCertificate(participant, course);
 
         const certificatesDir = path.join(__dirname, '..', 'config', 'certificates');

@@ -112,7 +112,7 @@ exports.getCourseDetails = async (req,res) => {
         const courseId = req.params.id;
 
         // Recupera il corso
-        const course = await Course.findById(courseId).populate('partecipanti.participantId');
+        const course = await Course.findById(courseId).populate('partecipanti');
         if (!course) {
             return res.status(404).json({ message: 'Corso non trovato' });
         }
