@@ -16,11 +16,13 @@
                 // Contenuto del PDF
                 doc.fontSize(25).text('Attestato di Completamento', { align: 'center' });
                 doc.moveDown();
-                doc.fontSize(18).text(`Certificato a: ${participant.nome} ${participant.cognome}`, { align: 'center' });
+                doc.text(`${course.nome_corso}`, { align: 'center' });
                 doc.moveDown();
-                doc.text(`Corso: ${course.nome_corso}`, { align: 'center' });
-                doc.text(`Durata: ${course.durata_corso.reduce((acc, day) => acc + day.durata_ore, 0)} ore`, { align: 'center' });
-                doc.text(`Completato in data: ${new Date(course.completionDate).toLocaleDateString('it-IT')}`, { align: 'center' });
+                doc.fontSize(18).text(`${participant.nome} ${participant.cognome}`, { align: 'center' });
+                doc.moveDown();
+                doc.text(`della durata di ${course.durata_corso.reduce((acc, day) => acc + day.durata_ore, 0)} ore`, { align: 'center' });
+                doc.moveDown();
+                doc.text('Congratulazioni', {align: 'center'})
     
                 // Chiudi il documento PDF
                 doc.end();
