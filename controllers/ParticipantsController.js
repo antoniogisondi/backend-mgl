@@ -2,6 +2,7 @@ const Course = require('../models/Course');
 const Participant = require('../models/Participant')
 const {generateCertificate} = require('../utils/certificateGenerator')
 const path = require('path')
+const fs = require('fs')
 
 // Recupero tutti i partecipanti
 exports.getAllParticipants = async (req, res) => {
@@ -98,10 +99,30 @@ exports.generateCourseCertificate = async (req,res) => {
             return res.status(400).json({ message: 'Il corso non è ancora completato.' });
         }
 
-        const certificate = await generateCertificate(participant, course)
-        res.setHeader('Content-Disposition', `attachment; filename="certificato-${participantId}.pdf"`);
+         // Percorso per salvare il certificato
+        
+
+        // if (!fs.existsSync(certificatesDir)) {
+        //     fs.mkdirSync(certificatesDir, { recursive: true });
+        // }
+
+        const pdfbuffer = await generateCertificate(participant, course);
+
+        const certificatesDir = path.join(__dirname, '..', 'config', 'certificates');
+        const certificatePath = path.join(certificatesDir, `Attestato_${courseId}.pdf`);
+
+        fs.writeFileSync(certificatePath, pdfbuffer)
+
+        // Invia il file come risposta
+        res.setHeader('Content-Disposition', `attachment; filename="Attestato_${courseId}.pdf"`);
         res.setHeader('Content-Type', 'application/pdf');
-        res.sendFile(path.resolve(certificatePath));
+        return res.sendFile(certificatePath, (err) => {
+            if (err) {
+                console.error('Errore durante l\'invio del file:', err);
+                res.status(500).json({ message: 'Errore durante l\'invio del file.' });
+            }
+            fs.unlinkSync(certificatePath)
+        });
     } catch (error) {
         console.error(error)
     }
