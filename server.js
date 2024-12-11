@@ -11,8 +11,9 @@ require('./utils/cron-jobs')
 const app = express()
 app.use(express.json());
 app.use(methodOverride('_method'));
-app.use(cors())
+app.use(cors({origin: 'http://localhost:5173', methods: 'GET,POST,PUT,DELETE', credentials: true,}))
 app.use(bodyParser.json())
+
 
 // Importazione delle rotte
 const authRoutes = require('./routes/auth')
@@ -26,7 +27,7 @@ app.use('/api', private)
 app.use('/api/auth', authRoutes)
 app.use('/api/courses', courseRoutes)
 app.use('/api/participants', participantsRoutes)
-// app.use('/api/payments', paymentRoutes)
+app.use('/api/payments', paymentRoutes)
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 connectDB()
