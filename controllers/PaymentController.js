@@ -2,7 +2,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const Payment = require('../models/Payment')
 
 exports.CreateCheckoutSession = async (req,res) => {
-    const {participantId, courseId} = req.body
+    const {participantId, courseId, nome_corso, autorizzazione, costo} = req.body
 
     try {
         const session = await stripe.checkout.sessions.create({
@@ -15,9 +15,9 @@ exports.CreateCheckoutSession = async (req,res) => {
                     price_data: {
                         currency: 'eur',
                         product_data: {
-                            name: `Pagamento per il corso ${courseId}`,
+                            name: `Pagamento per il corso ${nome_corso} aut. ${autorizzazione}`,
                         },
-                        unit_amount: 100 * 100, // Stripe usa i centesimi
+                        unit_amount: costo * 100, // Stripe usa i centesimi
                     },
                     quantity: 1,
                 },
@@ -25,6 +25,8 @@ exports.CreateCheckoutSession = async (req,res) => {
             metadata: {
                 courseId,
                 participantId,
+                nome_corso,
+                autorizzazione
             },
         })
 

@@ -6,6 +6,7 @@ exports.createCourse = async (req,res) => {
     const { 
         nome_corso, 
         programma_corso, 
+        costo,
         indirizzo_di_svolgimento, 
         cap_sede_corso,  
         città_di_svolgimento,
@@ -46,6 +47,7 @@ exports.createCourse = async (req,res) => {
         const newCourse = new Course({
             nome_corso,
             programma_corso, 
+            costo,
             indirizzo_di_svolgimento, 
             cap_sede_corso,  
             città_di_svolgimento,

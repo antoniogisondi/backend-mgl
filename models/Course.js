@@ -10,6 +10,7 @@ const CourseSchema = new mongoose.Schema({
             durata: { type: Number, required: true},
         },
     ],
+    costo: {type: Number, require: true},
     indirizzo_di_svolgimento: { type: String, required: true, maxlength: 40,},
     cap_sede_corso: { type: Number, required: true },
     città_di_svolgimento: { type: String, required: true, maxlength: 25 },
