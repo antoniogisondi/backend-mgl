@@ -13,6 +13,7 @@ const ParticipantSchema = new mongoose.Schema({
     azienda: { type: String },
     partita_iva_azienda: { type: String },
     courseId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course', required:true }],
+    payments: [{type: mongoose.Schema.Types.ObjectId, ref: 'Payment'}]
 })
 
 ParticipantSchema.set('toJSON', {getters:true})

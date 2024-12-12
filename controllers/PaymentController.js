@@ -1,5 +1,4 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
-const Payment = require('../models/Payment')
 
 exports.CreateCheckoutSession = async (req,res) => {
     const {participantId, courseId, nome_corso, autorizzazione, costo} = req.body
@@ -26,7 +25,8 @@ exports.CreateCheckoutSession = async (req,res) => {
                 courseId,
                 participantId,
                 nome_corso,
-                autorizzazione
+                autorizzazione, 
+                costo
             },
         })
 
@@ -36,3 +36,4 @@ exports.CreateCheckoutSession = async (req,res) => {
         res.status(500).json({ error: 'Errore del server' });
     }
 }
+

@@ -7,8 +7,11 @@ const connectDB = require('./config/db')
 const port = process.env.PORT || 5000
 dotenv.config()
 require('./utils/cron-jobs')
-
 const app = express()
+const webhook = require('./routes/webhook')
+app.use(webhook)
+
+
 app.use(express.json());
 app.use(methodOverride('_method'));
 app.use(cors({origin: 'http://localhost:5173', methods: 'GET,POST,PUT,DELETE', credentials: true,}))

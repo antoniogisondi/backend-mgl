@@ -51,14 +51,15 @@ exports.participantLogin = async (req,res) => {
     const { nome, cognome, codice_fiscale } = req.body
 
     try {
-        const participant = await Participant.findOne({nome, cognome, codice_fiscale}).populate('courseId')
+        const participant = await Participant.findOne({nome, cognome, codice_fiscale}).populate('courseId', 'payments')
+        console.log(participant.courseId)
+        console.log(participant.payments)
         if (!participant) {
             return res.status(404).json({message: 'Partecipante non trovato'})
         }
 
         const token = jwt.sign({ id: participant._id, role: 'participant' },process.env.JWT_SECRET_2,{ expiresIn: '1d' });
         res.status(200).json({message: 'Accesso effettuato con successo',token, participant});
-        console.log(req.body)
     } catch (error) {
         console.error('Errore durante il login del partecipante:', error);
         res.status(500).json({ message: 'Errore del server' });
