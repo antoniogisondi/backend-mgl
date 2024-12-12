@@ -22,8 +22,8 @@ exports.CreateCheckoutSession = async (req,res) => {
                 },
             ],
             metadata: {
-                courseId,
-                participantId,
+                participantId: participantId,
+                courseId: courseId,
                 nome_corso,
                 autorizzazione, 
                 costo

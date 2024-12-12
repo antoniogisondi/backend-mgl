@@ -1,5 +1,6 @@
 const User = require('../models/User')
 const Participant = require('../models/Participant')
+const Payment = require('../models/Payment')
 const jwt = require ('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
@@ -51,13 +52,10 @@ exports.participantLogin = async (req,res) => {
     const { nome, cognome, codice_fiscale } = req.body
 
     try {
-        const participant = await Participant.findOne({nome, cognome, codice_fiscale}).populate('courseId', 'payments')
-        console.log(participant.courseId)
-        console.log(participant.payments)
+        const participant = await Participant.findOne({nome, cognome, codice_fiscale}).populate('courseId').populate('payments')
         if (!participant) {
             return res.status(404).json({message: 'Partecipante non trovato'})
         }
-
         const token = jwt.sign({ id: participant._id, role: 'participant' },process.env.JWT_SECRET_2,{ expiresIn: '1d' });
         res.status(200).json({message: 'Accesso effettuato con successo',token, participant});
     } catch (error) {
