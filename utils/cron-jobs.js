@@ -1,6 +1,6 @@
-const cron = require('node-cron')
 const Course = require('../models/Course')
 const {updateCourseStatus} = require('./utils')
+const cron = require('node-cron')
 
 cron.schedule('0 0 * * *', async () => {
     console.log('Esecuzione del cronjob per aggiornare lo status dei corsi...')

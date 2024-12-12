@@ -8,6 +8,8 @@ const port = process.env.PORT || 5000
 dotenv.config()
 require('./utils/cron-jobs')
 const app = express()
+
+// ROTTA DEL WEBHOOK
 const webhook = require('./routes/webhook')
 app.use(webhook)
 

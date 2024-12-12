@@ -1,7 +1,7 @@
+const mongoose = require('mongoose')
 const Payment = require('../models/Payment')
 const Participant = require('../models/Participant')
-const mongoose = require('mongoose')
-const whSecret = 'whsec_727b78f836f7c6d96f59fb87c7707962a05c3f695a8d4616ebfd592da2cf16c5'
+const whSecret = process.env.WH_SECRET
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 exports.WebHook = async (req,res) => {

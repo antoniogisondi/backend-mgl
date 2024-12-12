@@ -10,6 +10,5 @@ const PaymentSchema = new mongoose.Schema({
     metadata: {type: mongoose.Schema.Types.Mixed},
 })
 
-const Payment = mongoose.model('Payment', PaymentSchema)
+module.exports = mongoose.model('Payment', PaymentSchema)
 
-module.exports = Payment
