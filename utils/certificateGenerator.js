@@ -70,16 +70,27 @@ exports.generateCertificate = async (participant,course) => {
         const pdfBuffer = fs.readFileSync(templatePath);
         const parsedData = await pdfParse(pdfBuffer);
         const pdfText = parsedData.text;
-        console.log("Contenuto del PDF:", pdfText);
         const pdfDoc = await PDFDocument.load(pdfBuffer);
 
         const pages = pdfDoc.getPages()
         const firstPage = pages[0]
+        const secondPage = pages[1]
+
+        const {width, height} = firstPage.getSize()
 
         const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
+        const centerTextX = (text, fontSize) => {
+            const textWidth = font.widthOfTextAtSize(text, fontSize);
+            return (width - textWidth) / 2; // Centra il testo
+        };
+
+        const positions = {
+            nome_corso: height - 300,
+        }
+
         const replacements = [
-            { text: course.nome_corso, x: 120, y: 700, size: 19 },
+            { text: course.nome_corso, x: 180, y: 250, size: 19 },
             { text: `${participant.nome} ${participant.cognome}`, x: 120, y: 680, size: 12 },
             { text: participant.data_nascita, x: 120, y: 660, size: 12 },
             { text: participant.comune_nascita, x: 120, y: 640, size: 12 },
