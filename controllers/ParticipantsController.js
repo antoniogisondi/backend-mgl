@@ -99,23 +99,17 @@ exports.generateCourseCertificate = async (req,res) => {
             return res.status(400).json({ message: 'Il corso non è ancora completato.' });
         }
 
-        const pdfbuffer = await generateCertificate(participant, course);
+        // Genera il certificato come buffer
+        const pdfBuffer = await generateCertificate(participant, course);
 
-        const certificatesDir = path.join(__dirname, '..', 'config', 'certificates');
-        const certificatePath = path.join(certificatesDir, `Attestato_${courseId}.pdf`);
-
-        fs.writeFileSync(certificatePath, pdfbuffer)
+        if (!pdfBuffer) {
+        return res.status(500).json({ message: "Errore nella generazione del certificato." });
+        }
 
         // Invia il file come risposta
-        res.setHeader('Content-Disposition', `attachment; filename="Attestato_${courseId}.pdf"`);
-        res.setHeader('Content-Type', 'application/pdf');
-        return res.sendFile(certificatePath, (err) => {
-            if (err) {
-                console.error('Errore durante l\'invio del file:', err);
-                res.status(500).json({ message: 'Errore durante l\'invio del file.' });
-            }
-            fs.unlinkSync(certificatePath)
-        });
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", `attachment; filename="Attestato_${participant.nome}.pdf"`);
+        return res.send(Buffer.from(pdfBuffer));
     } catch (error) {
         console.error(error)
     }
