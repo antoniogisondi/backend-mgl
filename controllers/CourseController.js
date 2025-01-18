@@ -144,9 +144,13 @@ exports.UpdateCourse = async (req, res) => {
                 }
             });
 
+            const new_date = durata_corso.filter((day) => !day._id)
+
+            console.log('Nuove date da controllare:', new_date);
+
             const today = new Date().setHours(0, 0, 0, 0);
 
-            const invalidDates = durata_corso.filter((day) => {
+            const invalidDates = new_date.filter((day) => {
                 const selectedDate = new Date(day.giorno).setHours(0, 0, 0, 0);
                 return selectedDate <= today;
             });

@@ -3,17 +3,31 @@ const fs = require('fs')
 const path = require('path')
 
 exports.generateCertificate = async (participant,course) => {
+    function durataTotale(dateEOrari) {
+        return dateEOrari.reduce((totale, giorno) => totale + giorno.durata_ore, 0)
+    }
+
+    function estraiDate(dateEOrari) {
+        return dateEOrari.map((giorno) => {
+            const data = new Date(giorno.giorno)
+            return data.toLocaleDateString("it-IT", {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            })
+        }).join(' e ')
+    }
+
     const texts = {
         data_di_nascita: `Nato/a il ${participant.data_nascita}, a ${participant.comune_nascita} (${participant.provincia_comune_nascita})`,
         mansione: `Profilo professionale: ${participant.mansione}`,
-        descrizione_corso: `Ha frequentato il ${course.nome_corso} della durata di tot ore`
+        descrizione_corso: `Ha frequentato il ${course.nome_corso} della durata di ${durataTotale(course.durata_corso)} ore, svoltosi nelle date 
+        ${estraiDate(course.durata_corso)} presso la sede di MGL Consulting S.r.l.s. via Casalnuovo n. 4 - 85024 - Lavello (PZ), superando la verifica di apprendimento.`,
     }
 
     try {
         const templatePath = path.join(__dirname, "..", "config", "template", "template.pdf");
         const pdfBuffer = fs.readFileSync(templatePath);
-        const parsedData = await pdfParse(pdfBuffer);
-        const pdfText = parsedData.text;
         const pdfDoc = await PDFDocument.load(pdfBuffer);
 
         const pages = pdfDoc.getPages()
@@ -24,16 +38,21 @@ exports.generateCertificate = async (participant,course) => {
 
         const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-        const centerTextX = (text, fontSize) => {
+        const centerTextUppercase = (text, fontSize) => {
             const upperText = text.toUpperCase()
             const textWidth = font.widthOfTextAtSize(upperText, fontSize);
             return (width - textWidth) / 2 ; // Centra il testo
         };
 
+        const centerTextX = (text,fontSize) => {
+            const textWidth = font.widthOfTextAtSize(text,fontSize)
+            return (width - textWidth) / 2
+        }
+
         const replacements = [
-            { text: course.nome_corso.toUpperCase(), x: centerTextX(course.nome_corso, 19), y: 600, size: 19 },
-            { text: `${participant.nome.toUpperCase()} ${participant.cognome.toUpperCase()}`, x: centerTextX(`${participant.nome.toUpperCase()} ${participant.cognome.toUpperCase()}`, 12), y: 500, size: 12 },
-            { text: texts.data_di_nascita, x: 120, y: 660, size: 12 },
+            { text: course.nome_corso.toUpperCase(), x: centerTextUppercase(course.nome_corso, 19), y: 600, size: 19 },
+            { text: `${participant.nome.toUpperCase()} ${participant.cognome.toUpperCase()}`, x: centerTextUppercase(`${participant.nome.toUpperCase()} ${participant.cognome.toUpperCase()}`, 24), y: 500, size: 24 },
+            { text: texts.data_di_nascita, x: centerTextX(texts.data_di_nascita, 14), y: 480, size: 14 },
             { text: texts.mansione, x: 120, y: 640, size: 12 },
             { text: texts.descrizione_corso, x: 120, y: 620, size: 12 },
             { text: participant.mansione, x: 120, y: 600, size: 12 },
